@@ -1,69 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Movie Rentals</title>
-    <link href="/styles/main.css" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <header>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Rentals - Basket</title>
+  <link href="/styles/main.css" rel="stylesheet" />
+  <!-- Added font links -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <div id="main">
+    <nav>
       <strong>Movie Rentals</strong>
-    </header>
-    <div id="main">
-      <article>
-        <h1 style="text-align: center">Basket</h1>
-        <div style="background-color: lightgrey; width: 70%; margin: auto; padding: 2em">
-          <table style="width: 100%">
-            <thead>
-              <tr>
-                <th>Movie</th>
-                <th>Time</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody id="basket"></tbody>
-          </table>
-          <hr />
-          <div style="text-align: right"><strong>Total Price:</strong> £<span id="total-price"></span></div>
-          <hr />
-          <a href="">Continue Shopping</a>
-          <button onclick="localStorage.setItem('basket', '[]');">Clear Basket</button>
-          <a href="/order.html">Go to payment details</a>
-        </div>
-      </article>
-    </div>
-  </body>
+      <br /><br />
+      Genres:
+      <ul>
+        <!-- Made genres clickable -->
+        <li><a href="#" onclick="filterMovies('Adventure')">Adventure</a></li>
+        <li><a href="#" onclick="filterMovies('Animation')">Animation</a></li>
+        <li><a href="#" onclick="filterMovies('Science Fiction')">Science Fiction</a></li>
+        <li><a href="#" onclick="filterMovies('Comedy')">Comedy</a></li>
+        <li><a href="#" onclick="filterMovies('Drama')">Drama</a></li>
+        <li><a href="#" onclick="filterMovies('Horror')">Horror</a></li>
+        <li><a href="#" onclick="filterMovies('Action')">Action</a></li>
+      </ul>
+      <br /><br />
+      <a href="/basket.html"><strong>View Basket</strong></a>
+      <br />
+      <!-- Corrected the Empty Basket button -->
+      <button onclick="localStorage.setItem('basket', '[]'); alert('Basket cleared!'); location.reload();">Empty Basket</button>
+      <br /><br />
+      <a href="/login.html"><strong>Exit</strong></a>
+      <br /><br />
+      <!-- Added Help link -->
+      <a href="/help.html"><strong>Help</strong></a>
+    </nav>
+    <article>
+      <h1>Your Basket</h1>
+      <div id="basket-items">
+        <!-- Basket items will be loaded here -->
+      </div>
+      <div>
+        <button onclick="window.location.href='/shop.html'">Continue Shopping</button>
+        <button onclick="proceedToCheckout()">Proceed to Checkout</button>
+      </div>
+    </article>
+  </div>
+
+  <!-- Added footer with contact information -->
+  <footer>
+    <p>Contact us at: <a href="mailto:support@movierentals.com">support@movierentals.com</a></p>
+  </footer>
 
   <script src="./js/movies.js"></script>
   <script>
-    const basketContainer = document.getElementById("basket");
+    function displayBasket() {
+      const basket = JSON.parse(localStorage.getItem("basket") ?? "[]");
+      const basketItemsDiv = document.getElementById('basket-items');
+      basketItemsDiv.innerHTML = ''; // Clear existing items
 
-    const basket = JSON.parse(localStorage.getItem("basket") ?? "[]");
+      if (basket.length === 0) {
+        basketItemsDiv.innerHTML = '<p>Your basket is empty.</p>';
+        return;
+      }
 
-    let totalPrice = 0.0;
+      basket.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'basket-item';
+        itemDiv.innerHTML = `
+          <div>
+            <img src="${item.image}" alt="${item.name}" />
+          </div>
+          <div style="margin: 0 0.75em">
+            <h4 style="margin: 0">${item.name}</h4>
+            <p>${item.description}</p>
+            <p>Days to rent: ${item.rentDays}</p>
+            <p>Price per day: £${item.price}</p>
+            <p>Total: £${(item.price * item.rentDays).toFixed(2)}</p>
+            <button onclick="removeFromBasket(${index})">Remove</button>
+          </div>
+        `;
+        basketItemsDiv.appendChild(itemDiv);
+      });
+    }
 
-    basket.forEach((basketItem) => {
-      basketContainer.insertAdjacentHTML(
-        "beforeend",
-        `
-            <tr>
-                <td>${basketItem.name}</td>
-                <td>${basketItem.rentDays}</td>
-                <td>${basketItem.price * basketItem.rentDays}</td>
-            </tr>
-        `
-      );
-      totalPrice += basketItem.price * basketItem.rentDays;
-    });
+    function removeFromBasket(index) {
+      const basket = JSON.parse(localStorage.getItem("basket") ?? "[]");
+      basket.splice(index, 1);
+      localStorage.setItem("basket", JSON.stringify(basket));
+      displayBasket();
+    }
 
-    document.getElementById("total-price").textContent = totalPrice * 1.2;
+    function proceedToCheckout() {
+      const basket = JSON.parse(localStorage.getItem("basket") ?? "[]");
+      if (basket.length === 0) {
+        alert('Your basket is empty.');
+        return;
+      }
+      window.location.href = '/order.html';
+    }
+
+    displayBasket();
   </script>
+</body>
 </html>

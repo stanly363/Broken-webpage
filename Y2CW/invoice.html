@@ -1,43 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Movie Rentals</title>
-    <link href="/styles/main.css" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="main">
-      <nav>
-        <strong>Movie Rentals Invoice</strong>
-      </nav>
-      <article>
-        <h1>Viewing Invoice for Movie Rental</h1>
-        <div id="payment-details">
-          <p>
-            <span id="payment-details-title"></span> <span id="payment-details-firstName"></span> <span id="payment-details-surname"></span>
-          </p>
-          <p>
-            <span id="payment-details-addressNumber"></span> <span id="payment-details-addressStreet"></span>
-            <span id="payment-details-addressPostcode"></span>
-          </p>
-          <p>
-            <span id="payment-details-card"></span> <span id="payment-details-cardNumber"></span>
-            <span id="payment-details-expiryMonth"></span>/<span id="payment-details-expiryYear"></span>
-          </p>
-          <br />
-          <p>Paid <span id="total-price"></span></p>
-        </div>
-      </article>
-    </div>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Rentals - Invoice</title>
+  <link href="/styles/main.css" rel="stylesheet" />
+  <!-- Added font links -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <div id="main">
+    <nav>
+      <strong>Movie Rentals Invoice</strong>
+    </nav>
+    <article>
+      <h1>Viewing Invoice for Movie Rental</h1>
+      <div id="payment-details">
+        <!-- Payment details will be populated here -->
+      </div>
+    </article>
+  </div>
+
+  <!-- Added footer with contact information -->
+  <footer>
+    <p>Contact us at: <a href="mailto:support@movierentals.com">support@movierentals.com</a></p>
+  </footer>
 
   <script src="./js/movies.js"></script>
   <script>
@@ -48,26 +41,37 @@
 
     let totalPrice = 0.0;
 
-    // Get all the prices of the movie in the basket
+    // Get all the prices of the movies in the basket
     basket.forEach((basketItem) => {
       totalPrice += basketItem.price * basketItem.rentDays;
     });
 
-    totalPrice *= 1.2;
+    // Calculate total price and round to 2 decimal places to avoid floating point errors
+    totalPrice = (totalPrice * 1.2).toFixed(2); // Assuming 20% tax
+    document.getElementById("total-price").textContent = `£${totalPrice}`;
 
     // Update the DOM with the payment details
-    document.getElementById("payment-details-title").textContent = paymentDetails.title;
-    document.getElementById("payment-details-firstName").textContent = paymentDetails.firstName;
-    document.getElementById("payment-details-surname").textContent = paymentDetails.surname;
-    document.getElementById("payment-details-addressNumber").textContent = paymentDetails.addressNumber;
-    document.getElementById("payment-details-addressStreet").textContent = paymentDetails.addressStreet;
-    document.getElementById("payment-details-addressPostcode").textContent = paymentDetails.addressPostcode;
-    document.getElementById("payment-details-card").textContent = paymentDetails.card;
-    document.getElementById("payment-details-cardNumber").textContent = paymentDetails.cardNumber;
-    document.getElementById("payment-details-expiryMonth").textContent = paymentDetails.expiryMonth;
-    document.getElementById("payment-details-expiryYear").textContent = paymentDetails.expiryYear;
-    document.getElementById("total-price").textContent = totalPrice;
+    if (paymentDetails) {
+      container.innerHTML = `
+        <p>
+          ${paymentDetails.title} ${paymentDetails.firstName} ${paymentDetails.surname}
+        </p>
+        <p>
+          ${paymentDetails.addressNumber} ${paymentDetails.addressStreet}, ${paymentDetails.addressCity}, ${paymentDetails.addressPostcode}
+        </p>
+        <p>
+          ${paymentDetails.card.toUpperCase()} **** **** **** ${paymentDetails.cardNumber.slice(-4)} Exp: ${paymentDetails.expiryMonth}/${paymentDetails.expiryYear}
+        </p>
+        <br />
+        <p>Paid £${totalPrice}</p>
+      `;
+    } else {
+      container.innerHTML = '<p>No payment details found.</p>';
+    }
 
-    localStorage.clear();
+    // Clear the basket and payment details after showing the invoice
+    localStorage.removeItem("basket");
+    localStorage.removeItem("paymentDetails");
   </script>
+</body>
 </html>

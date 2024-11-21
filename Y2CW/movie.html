@@ -1,58 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Movie Rentals</title>
-    <link href="/styles/main.css" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="main">
-      <nav>
-        <strong>Movie Rentals</strong>
-        <br />
-        <br />
-        Genres:
-        <ul>
-          <li>Adventure</li>
-          <li>Animation</li>
-          <li>Science fiction</li>
-          <li>Comedy</li>
-          <li>Drama</li>
-          <li>Horror</li>
-          <li>Action</li>
-        </ul>
-        <br />
-        <br />
-        <a href="/basket.html"><strong>View Basket</strong></a>
-        <br />
-        <br />
-        <a href="/login.html"><strong>Exit</strong></a>
-      </nav>
-      <article>
-        <h1 id="movie-title"></h1>
-        <strong>Release Date: </strong>
-        <p id="movie-release-date"></p>
-        <strong>Genres: </strong>
-        <p id="movie-genre"></p>
-        <strong>Director: </strong>
-        <p id="movie-director"></p>
-        <strong>Actors: </strong>
-        <p id="movie-actors"></p>
-        <strong>Price per day: </strong>
-        <p id="movie-price"></p>
-        <img id="movie-image" src="" />
-        <p id="movie-description"></p>
-      </article>
-    </div>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Rentals - Movie Details</title>
+  <link href="/styles/main.css" rel="stylesheet" />
+  <!-- Added font links -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <div id="main">
+    <nav>
+      <strong>Movie Rentals</strong>
+      <br /><br />
+      Genres:
+      <ul>
+        <!-- Made genres clickable -->
+        <li><a href="#" onclick="filterMovies('Adventure')">Adventure</a></li>
+        <li><a href="#" onclick="filterMovies('Animation')">Animation</a></li>
+        <li><a href="#" onclick="filterMovies('Science Fiction')">Science Fiction</a></li>
+        <li><a href="#" onclick="filterMovies('Comedy')">Comedy</a></li>
+        <li><a href="#" onclick="filterMovies('Drama')">Drama</a></li>
+        <li><a href="#" onclick="filterMovies('Horror')">Horror</a></li>
+        <li><a href="#" onclick="filterMovies('Action')">Action</a></li>
+      </ul>
+      <br /><br />
+      <a href="/basket.html"><strong>View Basket</strong></a>
+      <br /><br />
+      <a href="/login.html"><strong>Exit</strong></a>
+      <br /><br />
+      <!-- Added Help link -->
+      <a href="/help.html"><strong>Help</strong></a>
+    </nav>
+    <article>
+      <button onclick="window.history.back()">Back</button>
+      <h1 id="movie-title"></h1>
+      <img id="movie-image" src="" alt="Movie Image" />
+      <p id="movie-description"></p>
+      <strong>Release Date: </strong><span id="movie-release-date"></span><br />
+      <strong>Genres: </strong><span id="movie-genre"></span><br />
+      <strong>Director: </strong><span id="movie-director"></span><br />
+      <strong>Actors: </strong><span id="movie-actors"></span><br />
+      <strong>Price per day: </strong><span id="movie-price"></span><br />
+    </article>
+  </div>
+
+  <!-- Added footer with contact information -->
+  <footer>
+    <p>Contact us at: <a href="mailto:support@movierentals.com">support@movierentals.com</a></p>
+  </footer>
 
   <script src="./js/movies.js"></script>
   <script>
@@ -62,13 +64,18 @@
     const movieId = parseInt(urlParams.get("id"));
     const movie = movies.find((movie) => movie.id === movieId);
 
-    document.getElementById("movie-title").textContent = movie.name;
-    document.getElementById("movie-image").src = movie.image;
-    document.getElementById("movie-genre").textContent = movie.genre;
-    document.getElementById("movie-director").textContent = movie.director;
-    document.getElementById("movie-actors").textContent = movie.actors;
-    document.getElementById("movie-description").textContent = movie.description;
-    document.getElementById("movie-release-date").textContent = movie.releaseDate;
-    document.getElementById("movie-price").textContent = movie.price;
+    if (movie) {
+      document.getElementById("movie-title").textContent = movie.name;
+      document.getElementById("movie-image").src = movie.image;
+      document.getElementById("movie-genre").textContent = movie.genre;
+      document.getElementById("movie-director").textContent = movie.director;
+      document.getElementById("movie-actors").textContent = movie.actors;
+      document.getElementById("movie-description").textContent = movie.description;
+      document.getElementById("movie-release-date").textContent = movie.releaseDate;
+      document.getElementById("movie-price").textContent = `£${movie.price}`;
+    } else {
+      document.querySelector('article').innerHTML = '<p>Movie not found.</p>';
+    }
   </script>
+</body>
 </html>
